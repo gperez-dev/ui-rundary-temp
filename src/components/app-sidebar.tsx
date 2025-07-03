@@ -95,7 +95,7 @@ export default function Sidebar({ children }: SidebarProps) {
                     </div>
                     
                     {/* Botón de colapso */}
-                    <div className={`absolute right-0 transition-opacity duration-300 ${expanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    <div className={`absolute right-0 ${expanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-hover:transition-opacity group-hover:duration-200'}`}>
                         <button 
                             onClick={toggle}
                             className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"

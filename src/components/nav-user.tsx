@@ -53,20 +53,13 @@ export function NavUser({ user }: NavUserProps) {
             </AvatarFallback>
           </Avatar>
           
-          <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}>
+          <div className={`flex justify-between items-center overflow-hidden ${expanded ? "w-52 ml-3" : "w-0"}`}>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-xs">{user.email}</span>
             </div>
             <ChevronsUpDown className="ml-auto size-4" />
           </div>
-            
-          {/* Tooltip para cuando está colapsado */}
-          {!expanded && (
-            <div className="absolute left-full rounded-md px-2 py-1 ml-6 bg-indigo-100 text-indigo-800 text-sm invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 whitespace-nowrap">
-              {user.name}
-            </div>
-          )}
         </div>
       </DropdownMenuTrigger>
       
