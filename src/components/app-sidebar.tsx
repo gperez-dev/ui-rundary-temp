@@ -19,19 +19,24 @@ export { SidebarContext };
 
 interface SidebarProps {
     children?: ReactNode;
+    user?: {
+        name: string;
+        email: string;
+        avatar?: string;
+    };
 }
 
-export default function Sidebar({ children }: SidebarProps) {
+export default function Sidebar({ 
+    children,
+    user = {
+        name: "Usuario",
+        email: "usuario@ejemplo.com",
+        avatar: undefined
+    }
+}: SidebarProps) {
     const { expanded, toggle } = useSidebar()
     const pathname = usePathname()
     
-    // Datos del usuario (esto vendría de tu sistema de autenticación)
-    const user = {
-        name: "Gonzalo Perez",
-        email: "gonzaloperez@gmail.com",
-        avatar: "/api/placeholder/40/40" // O la URL de la imagen del usuario
-    }
-
     // Configuración de navegación principal
     const mainNavItems = [
         {
