@@ -1,6 +1,7 @@
 import Sidebar from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider } from "@/components/providers/sidebar-provider";
+import { NavOverlay } from "@/components/nav-overlay";
 
 export default async function AppLayout({
     children,
@@ -11,6 +12,7 @@ export default async function AppLayout({
         <SidebarProvider>
             <div className="flex min-h-screen bg-gray-50">
                 <Sidebar />
+                <NavOverlay />
                 
                 {/* Overlay para móvil cuando el sidebar está abierto */}
                 <div className="fixed inset-0 z-40 bg-black/50 sm:hidden" style={{ display: 'none' }} />

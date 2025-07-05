@@ -1,11 +1,13 @@
 "use client"
 
 import { type LucideIcon } from "lucide-react"
-import { useSidebar } from "@/hooks/use-sidebar"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
+import { useOverlaySidebar } from "@/hooks/use-overlay-sidebar"
+import Link from "next/link"
 
 export function NavMain({
   items,
+  expanded,
 }: {
   items: {
     title: string
@@ -14,6 +16,7 @@ export function NavMain({
     isActive?: boolean
     alert?: boolean
   }[]
+  expanded: boolean
 }) {
   return (
     <div style={{ position: 'relative' }}>
@@ -26,6 +29,7 @@ export function NavMain({
             icon={item.icon}
             isActive={item.isActive}
             alert={item.alert}
+            expanded={expanded}
           />
         ))}
       </ul>
@@ -39,67 +43,46 @@ function NavItem({
   icon: Icon,
   isActive = false,
   alert = false,
+  expanded,
 }: {
   title: string
   url: string
   icon?: LucideIcon
   isActive?: boolean
   alert?: boolean
+  expanded: boolean
 }) {
-  const { expanded } = useSidebar()
-  
+  const { visible, open: openOverlay, close: closeOverlay } = useOverlaySidebar()
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (title === "Chat") {
+      // Toggle overlay visibility when Chat item is clicked
+      e.preventDefault()
+      if (visible) {
+        closeOverlay()
+      } else {
+        openOverlay()
+      }
+      return
+    }
+
+    // If any other item is clicked while the overlay is visible, close it
+    if (visible) {
+      closeOverlay()
+    }
+  }
+
   const baseClasses = `
     group/button flex items-center gap-3 rounded-lg px-3 py-2 text-sm
     transition-colors w-full text-gray-700 bg-transparent hover:bg-foreground/5
     disabled:pointer-events-none disabled:opacity-50
   `
 
-  const tooltipContent = !expanded ? (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <a 
-          href={url} 
-          className={baseClasses}
-          aria-label={title}
-          aria-current={isActive ? "page" : undefined}
-          data-active={isActive ? "" : undefined}
-          data-state={isActive ? "active" : "closed"}
-        >
-          {Icon && (
-            <Icon 
-              size={20}
-              strokeWidth={2}
-              className={`shrink-0 group-hover:scale-105 transition-transform ${
-                isActive ? "text-indigo-600" : ""
-              }`}
-            />
-          )}
-          
-          {/* Texto del item */}
-          <span className={`
-            overflow-hidden whitespace-nowrap transition-all duration-300 font-medium
-            ${expanded ? "w-auto opacity-100" : "w-0 opacity-0"}
-          `}>
-            {title}
-          </span>
-          
-          {/* Indicador de alerta - nuevo estilo */}
-          {alert && (
-            <span className={`ml-auto transition-all duration-300 ${expanded ? "sm:hidden xl:block" : "hidden"}`}>
-              <span className="inline-flex items-center font-medium whitespace-nowrap shrink-0 rounded-full justify-center bg-foreground/5 text-foreground/70 text-3xs h-4 min-w-4 leading-none px-[.625em]">
-                2
-              </span>
-            </span>
-          )}
-        </a>
-      </TooltipTrigger>
-      <TooltipContent side="right" sideOffset={12}>
-        {title}
-      </TooltipContent>
-    </Tooltip>
-  ) : (
-    <a 
-      href={url} 
+  const linkElement = (
+    <Link
+      href={url}
+      prefetch
+      onClick={handleClick}
       className={baseClasses}
       aria-label={title}
       aria-current={isActive ? "page" : undefined}
@@ -107,7 +90,7 @@ function NavItem({
       data-state={isActive ? "active" : "closed"}
     >
       {Icon && (
-        <Icon 
+        <Icon
           size={20}
           strokeWidth={2}
           className={`shrink-0 group-hover:scale-105 transition-transform ${
@@ -115,34 +98,49 @@ function NavItem({
           }`}
         />
       )}
-      
+
       {/* Texto del item */}
-      <span className={`
-        overflow-hidden whitespace-nowrap transition-all duration-300 font-medium
-        ${expanded ? "w-auto opacity-100" : "w-0 opacity-0"}
-      `}>
+      <span
+        className={`
+          overflow-hidden whitespace-nowrap transition-all duration-300 font-medium
+          ${expanded ? "w-auto opacity-100" : "w-0 opacity-0"}
+        `}
+      >
         {title}
       </span>
-      
-      {/* Indicador de alerta - nuevo estilo */}
+
+      {/* Indicador de alerta */}
       {alert && (
-        <span className={`ml-auto transition-all duration-300 ${expanded ? "sm:hidden xl:block" : "hidden"}`}>
+        <span
+          className={`ml-auto transition-all duration-300 ${
+            expanded ? "sm:hidden xl:block" : "hidden"
+          }`}
+        >
           <span className="inline-flex items-center font-medium whitespace-nowrap shrink-0 rounded-full justify-center bg-foreground/5 text-foreground/70 text-3xs h-4 min-w-4 leading-none px-[.625em]">
             2
           </span>
         </span>
       )}
-    </a>
+    </Link>
   )
 
   return (
     <li className="relative">
-      {/* Indicador de página activa - solo cuando está colapsado */}
+      {/* Active page indicator when collapsed */}
       {!expanded && isActive && (
         <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-600 rounded-l-full transition-all duration-300 z-10" />
       )}
-      
-      {tooltipContent}
+
+      {!expanded ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{linkElement}</TooltipTrigger>
+          <TooltipContent side="right" sideOffset={12}>
+            {title}
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        linkElement
+      )}
     </li>
   )
 }
