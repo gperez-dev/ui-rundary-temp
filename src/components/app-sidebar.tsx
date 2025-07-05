@@ -15,10 +15,9 @@ export default function Sidebar({ children }: SidebarProps) {
         <aside
             aria-label="Sidebar"
             className={`
-                fixed inset-y-0 left-0 z-50 flex flex-col
+                sticky top-0 left-0 z-50 self-start h-screen flex flex-col
                 bg-background border-r transition-all duration-300 ease-in-out
                 ${expanded ? 'w-64' : 'w-16'}
-                sm:relative sm:translate-x-0
             `}
         >
             <SidebarContent expanded={expanded} onCollapseButtonClickAction={toggle}>
